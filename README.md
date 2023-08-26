@@ -1,9 +1,3 @@
-# Software Engineer (ML & LLMs) Challenge
-
-## Overview
-
-Welcome to the **Software Engineer (ML & LLMs)** Application Challenge. In this, you will have the opportunity to get closer to a part of the reality of the role, and demonstrate your skills and knowledge in machine learning and cloud.
-
 ## Problem
 
 A jupyter notebook (`exploration.ipynb`) has been provided with the work of a Data Scientist (from now on, the DS). The DS, trained a model to predict the probability of **delay** for a flight taking off or landing at SCL airport. The model was trained with public and real data, below we provide you with the description of the dataset:
