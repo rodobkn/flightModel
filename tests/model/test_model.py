@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+import numpy as np
 
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -28,7 +29,7 @@ class TestModel(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.model = DelayModel()
-        self.data = pd.read_csv(filepath_or_buffer="../data/data.csv")
+        self.data = pd.read_csv(filepath_or_buffer="./data/data.csv")
         
 
     def test_model_preprocess_for_training(
@@ -51,7 +52,7 @@ class TestModel(unittest.TestCase):
     def test_model_preprocess_for_serving(
         self
     ):
-        features = self.model.preprocess(
+        features, target = self.model.preprocess(
             data=self.data
         )
 
@@ -67,6 +68,7 @@ class TestModel(unittest.TestCase):
             data=self.data,
             target_column="delay"
         )
+        target = target["delay"]
 
         _, features_validation, _, target_validation = train_test_split(features, target, test_size = 0.33, random_state = 42)
 
@@ -75,9 +77,12 @@ class TestModel(unittest.TestCase):
             target=target
         )
 
-        predicted_target = self.model._model.predict(
+        predicted_target = self.model.predict(
             features_validation
         )
+
+        # Transforming list type to a numpy array for the classification_report() function
+        predicted_target = np.array(predicted_target)
 
         report = classification_report(target_validation, predicted_target, output_dict=True)
         
@@ -90,8 +95,13 @@ class TestModel(unittest.TestCase):
     def test_model_predict(
         self
     ):
-        features = self.model.preprocess(
+        features, target = self.model.preprocess(
             data=self.data
+        )
+
+        self.model.fit(
+            features=features,
+            target=target
         )
 
         predicted_targets = self.model.predict(
