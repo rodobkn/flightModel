@@ -73,8 +73,6 @@ class DelayModel:
 
         Returns:
             Tuple[pd.DataFrame, pd.DataFrame]: features and target.
-            or
-            pd.DataFrame: features.
         """
 
         data['period_day'] = data['Fecha-I'].apply(self.get_period_day)
@@ -149,3 +147,9 @@ class DelayModel:
         
         predictions = self._model.predict(features)
         return predictions.tolist()
+    
+    def saveModel(self) -> None:
+        """
+        Save the model to be used in the API
+        """
+        self._model.save_model("main_model.model")
