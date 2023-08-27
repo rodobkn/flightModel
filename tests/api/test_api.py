@@ -22,7 +22,6 @@ class TestBatchPipeline(unittest.TestCase):
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"predict": [0]})
-    
 
     def test_should_failed_unkown_column_1(self):
         data = {       
@@ -65,3 +64,18 @@ class TestBatchPipeline(unittest.TestCase):
         # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0]))
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 400)
+
+    def test_should_get_predict_2(self):
+        data = {
+            "flights": [
+                {
+                    "OPERA": "Latin American Wings",
+                    "TIPOVUELO": "I",
+                    "MES": 3
+                }
+            ]
+        }
+        # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0])) # change this line to the model of chosing
+        response = self.client.post("/predict", json=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"predict": [1]})
