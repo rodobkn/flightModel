@@ -1,0 +1,8 @@
+/.venv/
+.coverage
+challenge/__pycache__/
+reports/
+tests/__pycache__/
+tests/model/__pycache__/
+challenge/.ipynb_checkpoints/
+.DS_Store
