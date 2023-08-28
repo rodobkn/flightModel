@@ -103,3 +103,24 @@ We are looking for a proper `CI/CD` implementation for this development.
 
 - Create a new folder called `.github` and copy the `workflows` folder that we provided inside it.
 - Complete both `ci.yml` and `cd.yml`(consider what you did in the previous parts).
+
+
+### Rodolfo Notes
+
+In order to run the api while developing, first you need to have the virtual environment set up. Then switch to the virtual env and go to the challenge folder and run the following command:
+
+- `uvicorn api:app --reload`
+
+Deploy manually to google cloud
+
+- First, from the root directory you need to run: `docker build -t fastapimodel .`
+
+- Then run the command: `docker tag fastapimodel:latest gcr.io/delaylatammodel/fastapimodel`
+
+In the previous command is important to notice that you need to use the exact tag that you used in the first command and `delaylatammodel` is the id of the google cloud project.
+
+- Now run: `docker push gcr.io/delaylatammodel/fastapimodel`
+
+With the previous command you push the image to Google Cloud Container Registry. Then, you can use that image in google cloud run and you api will be deployed. 
+
+In this case the api was deployed in the following url: `https://fastapimodel-oedodimemq-uc.a.run.app`
