@@ -1,0 +1,61 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Create virtual env and install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements_prod.txt
+
+      - name: Run model-test and api-test
+        id: tests
+        run: |
+          source venv/bin/activate
+          if make model-test && make api-test; then
+            echo "success" > $STATUS_FILE
+          else
+            echo "failure" > $STATUS_FILE
+          fi
+        env:
+          STATUS_FILE: ./status.txt
+
+      - name: Read status from file
+        id: read_status
+        run: |
+          status=$(cat $STATUS_FILE)
+          echo "::set-output name=status::$status"
+
+      - name: Set status check
+        if: steps.read_status.outputs.status == 'success'
+        uses: github/status-check@v2
+        with:
+          status: success
+          context: Continuous Integration
+
+      - name: Set status check
+        if: steps.read_status.outputs.status == 'failure'
+        uses: github/status-check@v2
+        with:
+          status: failure
+          context: Continuous Integration
