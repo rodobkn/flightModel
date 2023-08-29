@@ -28,34 +28,38 @@ jobs:
           source venv/bin/activate
           pip install -r requirements_prod.txt
 
-      - name: Run model-test and api-test
-        id: tests
+      - name: Run model-test
         run: |
           source venv/bin/activate
-          if make model-test && make api-test; then
-            echo "success" > $STATUS_FILE
-          else
-            echo "failure" > $STATUS_FILE
-          fi
-        env:
-          STATUS_FILE: ./status.txt
+          make model-test
 
-      - name: Read status from file
-        id: read_status
+      - name: Run api-test
         run: |
-          status=$(cat $STATUS_FILE)
-          echo "::set-output name=status::$status"
+          source venv/bin/activate
+          make api-test
 
-      - name: Set status check
-        if: steps.read_status.outputs.status == 'success'
-        uses: github/status-check@v2
-        with:
-          status: success
-          context: Continuous Integration
+      # - name: Run model-test and api-test
+      #   id: tests
+      #   run: |
+      #     source venv/bin/activate
+      #     if make model-test && make api-test; then
+      #       echo "success" > $HOME/status
+      #     else
+      #       echo "failure" > $HOME/status
+      #     fi
 
-      - name: Set status check
-        if: steps.read_status.outputs.status == 'failure'
-        uses: github/status-check@v2
-        with:
-          status: failure
-          context: Continuous Integration
+      # - name: Set status check
+      #   uses: actions/github-script@v5
+      #   with:
+      #     script: |
+      #       const status = fs.readFileSync(`${process.env.HOME}/status`, 'utf8').trim();
+      #       const context = 'Continuous Integration';
+      #       github.repos.createStatus({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         sha: context.sha,
+      #         state: status,
+      #         context: context
+      #       });
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
